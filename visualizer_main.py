@@ -1,6 +1,6 @@
 import config as cfg
 
-from dataloader import DataLoader
+from datahandler import DataLoader
 
 def main():
     path = cfg.DATA_PATH
