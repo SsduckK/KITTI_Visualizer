@@ -5,21 +5,23 @@ from glob import glob
 
 
 class DataLoader:
-    def __init__(self, path, cam_idx):
+    def __init__(self, path):
         self.path = path
-        self.cam_idx = cam_idx
         self.images = None
         self.point_clouds = None
         self.labels = None
-        self.load_data(self.path, self.cam_idx)
+        self.load_data(self.path)
 
     def __len__(self):
-        return len()
+        return len(self.images)
 
-    def load_data(self, path, cam_idx):
-        image_sequences = glob(op.join(path, "*", cam_idx, "data", "*.png"))
-        pcd_sequences = glob(op.join(path, "*", "velodyne_points", "data", "*.bin"))
-        label_sequences = glob(op.join(path, "*", "oxts", "data", "*.txt"))
+    def __getitem__(self, index):
+        return (self.images[index], self.point_clouds[index], self.labels[index])
+
+    def load_data(self, path):
+        image_sequences = glob(op.join(path, "data_object_image_2", "training", "image_2", "*.png"))
+        pcd_sequences = glob(op.join(path, "data_object_velodyne", "training", "velodyne", "*.bin"))
+        label_sequences = glob(op.join(path, "data_object_label_2", "training", "label_2", "*.txt"))
         print(f"image : {len(image_sequences)}, pcd : {len(label_sequences)}, pcd : {len(pcd_sequences)}")
         if(self.check_valid_dataset(len(image_sequences), len(pcd_sequences), len(label_sequences))):
             self.images = image_sequences
