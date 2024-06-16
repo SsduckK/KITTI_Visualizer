@@ -16,7 +16,7 @@ class DataLoader:
         return len(self.images)
 
     def __getitem__(self, index):
-        return (self.images[index], self.point_clouds[index], self.labels[index])
+        return {"image": self.images[index], "point_cloud": self.point_clouds[index], "label": self.labels[index]}
 
     def load_data(self, path):
         image_sequences = glob(op.join(path, "data_object_image_2", "training", "image_2", "*.png"))
