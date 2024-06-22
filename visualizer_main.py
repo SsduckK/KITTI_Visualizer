@@ -1,3 +1,5 @@
+import cv2
+
 import config as cfg
 
 from datahandler import DataLoader
@@ -6,28 +8,39 @@ from datahandler import PCDParser
 from datahandler import DataCollector
 
 
-def initialize():
-    path = cfg.DATA_PATH
-    DL = DataLoader(path)
-    LP = LabelParser("2D")
-    PP = PCDParser()
-    DC = DataCollector()
-    return DL, LP, PP, DC
+class Visualizer:
+    def __init__(self, path):
+        self.path = path
+        self.DL = DataLoader(path)
+        self.LP = LabelParser("2D")
+        self.PP = PCDParser()
+        self.DC = DataCollector()
 
+        self.image = None
+        self.label = None
+        self.pcd = None
 
-def get_data(idx, DL, LP, PP):
-    image = DL[idx]["image"]
-    label = DL[idx]["label"]
-    label_instance = LP(label)
-    pcd = DL[idx]["point_cloud"]
-    scene_pcd = PP(pcd)
+    def __len__(self):
+        return len(self.DL)
 
-    return image, label_instance, scene_pcd
+    def get_data(self, idx):
+        image_file = self.DL[idx]["image"]
+        label_file = self.DL[idx]["label"]
+        pcd_file = self.DL[idx]["point_cloud"]
+        
+        self.image = cv2.imread(image_file)
+        self.label = self.LP(label_file)
+        self.pcd = self.PP(pcd_file)
+
+        return self.DC(self.image, self.label, self.pcd)
+
 
 def main():
-    data_loader, label_parser, points_parser, data_collector = initialize()
-    image, label, pcd = get_data(1, data_loader, label_parser, points_parser)
-    print(image, label, pcd)
+    data_path = cfg.DATA_PATH
+    vis = Visualizer(data_path)
+    
+    for idx in range(len(vis)):
+        vis.get_data(idx)
 
 
 if __name__ == "__main__":
