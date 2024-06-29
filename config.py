@@ -1,1 +1,1 @@
-DATA_PATH = "/mnt/e/KITTI"
+DATA_PATH = "/mnt/d/KITTI"
