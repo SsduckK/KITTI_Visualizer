@@ -9,12 +9,15 @@ from datahandler import DataCollector
 
 
 class Visualizer:
-    def __init__(self, path):
+    def __init__(self, path, vis_mode, vis_option):
         self.path = path
+        self.mode = vis_mode
+        self.option = vis_option
+
         self.DL = DataLoader(path)
-        self.LP = LabelParser("2D")
+        self.LP = LabelParser(self.mode)
         self.PP = PCDParser()
-        self.DC = DataCollector()
+        self.DC = DataCollector(self.mode, self.option)
 
         self.image = None
         self.label = None
@@ -32,16 +35,25 @@ class Visualizer:
         self.label = self.LP(label_file)
         self.pcd = self.PP(pcd_file)
 
-        return self.DC(self.image, self.label, self.pcd)
+        results =  self.DC(self.image, self.label, self.pcd)
+        self.visualize(results)
+
+    def visualize(self, results):
+        for rst in results:
+            cv2.imshow("bounding box image", rst)
+
+        cv2.waitKey(0)
 
 
 def main():
     data_path = cfg.DATA_PATH
-    vis = Visualizer(data_path)
-    
-    for idx in range(len(vis)):
-        vis.get_data(idx)
+    vis_mode = cfg.VIS_MODE
+    vis_option = cfg.VIS_OPTION
+    vis = Visualizer(data_path, vis_mode, vis_option)
 
+    for i in range(len(vis)):
+        vis.get_data(i)
+    
 
 if __name__ == "__main__":
     main()
