@@ -2,6 +2,7 @@ from .dataloader import DataLoader
 from .labelparser import LabelParser
 from .pcd_parser import PCDParser
 from .datacollector import DataCollector
+from .calib_parser import CalibParser
 
 print("Initialize dataloader package")
 

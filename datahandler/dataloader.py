@@ -10,35 +10,39 @@ class DataLoader:
         self.images = None
         self.point_clouds = None
         self.labels = None
+        self.calib = None
         self.load_data(self.path)
 
     def __len__(self):
         return len(self.images)
 
     def __getitem__(self, index):
-        return {"image": self.images[index], "point_cloud": self.point_clouds[index], "label": self.labels[index]}
+        return {"image": self.images[index], "point_cloud": self.point_clouds[index], "label": self.labels[index], "calib": self.calib[index]}
 
     def load_data(self, path):
         image_sequences = glob(op.join(path, "data_object_image_2", "training", "image_2", "*.png"))
         pcd_sequences = glob(op.join(path, "data_object_velodyne", "training", "velodyne", "*.bin"))
         label_sequences = glob(op.join(path, "data_object_label_2", "training", "label_2", "*.txt"))
+        calib_sequences = glob(op.join(path, "data_object_calib", "training", "calib", "*.txt"))
         image_sequences.sort()
         pcd_sequences.sort()
         label_sequences.sort()
+        calib_sequences.sort()
 
-        print(f"image : {len(image_sequences)}, pcd : {len(label_sequences)}, pcd : {len(pcd_sequences)}")
+        print(f"image : {len(image_sequences)}, pcd : {len(label_sequences)}, pcd : {len(pcd_sequences)}, calib : {len(calib_sequences)}")
 
-        if(self.check_valid_dataset(len(image_sequences), len(pcd_sequences), len(label_sequences))):
+        if(self.check_valid_dataset(len(image_sequences), len(pcd_sequences), len(label_sequences), len(calib_sequences))):
             self.images = image_sequences
             self.point_clouds = pcd_sequences
             self.labels = label_sequences
+            self.calib = calib_sequences
             print("==>DATASET CREATE SUCCESSED \ncontinue")
         else:
             print("==> DATASET CREATE FAILED \nshutdown")
             return
 
-    def check_valid_dataset(self, images, pcds, labels):
-        if(images == pcds == labels):
+    def check_valid_dataset(self, images, pcds, labels, calib):
+        if(images == pcds == labels == calib):
             return True
         else:
             False

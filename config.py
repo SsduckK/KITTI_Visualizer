@@ -1,6 +1,6 @@
-DATA_PATH = "/mnt/e/KITTI"
+DATA_PATH = "/mnt/d/KITTI"
 VIS_MODE = "2D"
-VIS_OPTION = ["box"]
+VIS_OPTION = ["box", "bev"]
 
 CTGR_COLOR = \
         {
