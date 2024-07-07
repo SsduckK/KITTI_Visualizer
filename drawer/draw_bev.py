@@ -22,15 +22,20 @@ class DrawBEV:
         return tf_mat
 
     def draw_bev(self, pcd):
-        tf_points = pcd@self.world2top.T
-        tf_points[:, 0] += self.w / 2
-        tf_points[:, 1] += self.h - tf_points[:, 1]
-        tf_points = np.array(tf_points, dtype=np.int64)
+        pcd = pcd @ self.world2top.T
+        pcd[:, :2] /= 0.05
+        pcd[:, 0] += 320
+        pcd[:, 1] += 320
+        pcd = pcd.astype(np.uint8)
+        valid_indices = (pcd[:, 0] >= 0) & (pcd[:, 0] < self.w) & (pcd[:, 1] >= 0) & (pcd[:, 1] < self.h)
+        print(pcd[:5])
+        pcd = pcd[valid_indices]
+        print("asdfasdf")
+        print(pcd[:5])
 
-        valid_idx = ((tf_points[:, 0] >= 0) & (tf_points[:, 0] <= self.w) & \
-                (tf_points[:, 1] >= 0) & (tf_points[:, 1] <= self.h))
+        print(self.base_space.shape)
+        print(pcd[:, 1].shape, " " , pcd[:, 0].shape)
 
-        valid_points = tf_points[valid_idx]
-        print(valid_points)
+        self.base_space[pcd[:, 1], pcd[:, 0]] = 255
         cv2.imshow("bev", self.base_space)
         cv2.waitKey()
